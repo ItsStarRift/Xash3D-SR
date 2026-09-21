@@ -1,0 +1,55 @@
+name: Android Build
+
+on:
+  push:
+    branches: [ birlesik-apk ]
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    env:
+      SDL_VERSION: 2.32.10
+    steps:
+      - name: Checkout engine
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Checkout CS16Client
+        uses: actions/checkout@v5
+        with:
+          repository: ItsStarRift/CS16Client-SR
+          path: cs16client
+          submodules: recursive
+
+      - name: Install dependencies (engine)
+        run: bash scripts/gha/deps_android.sh
+
+      - name: Build CS16Client native libs
+        run: |
+          export JAVA_HOME=$GITHUB_WORKSPACE/java
+          export ANDROID_HOME=$GITHUB_WORKSPACE/sdk
+          export PATH=$PATH:$JAVA_HOME/bin
+          cd cs16client/android
+          ./gradlew assembleGitDebug --no-daemon \
+            -Pandroid.injected.build.abi=arm64-v8a,armeabi-v7a
+
+      - name: Collect CS16Client libs
+        run: |
+          mkdir -p android/app/src/main/jniLibs/arm64-v8a
+          mkdir -p android/app/src/main/jniLibs/armeabi-v7a
+          cd cs16client/android/app/build/outputs/apk/git/debug
+          unzip -o app-git-debug.apk 'lib/arm64-v8a/*' 'lib/armeabi-v7a/*' -d /tmp/cslibs
+          cp /tmp/cslibs/lib/arm64-v8a/*.so $GITHUB_WORKSPACE/android/app/src/main/jniLibs/arm64-v8a/
+          cp /tmp/cslibs/lib/armeabi-v7a/*.so $GITHUB_WORKSPACE/android/app/src/main/jniLibs/armeabi-v7a/
+          ls -la $GITHUB_WORKSPACE/android/app/src/main/jniLibs/*
+
+      - name: Build engine APK
+        run: bash scripts/gha/build_android.sh
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: artifacts/*.apk

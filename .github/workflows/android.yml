@@ -38,7 +38,12 @@ jobs:
 
       - name: Find CS16Client APK
         run: |
-          find cs16client/android/app/build/outputs -name "*.apk" -exec ls -la {} \;
+          echo "=== APK dosyalari ==="
+          find cs16client -name "*.apk" -exec ls -la {} \;
+          echo "=== libclient/libcs/libmenu/libyapb dosyalari ==="
+          find cs16client -name "libclient_android*" -o -name "libcs_android*" -o -name "libmenu_android*" -o -name "libyapb_android*" | head -30
+          echo "=== outputs klasoru ==="
+          ls -R cs16client/android/app/build/outputs 2>&1 | head -40
 
       - name: Collect CS16Client libs
         continue-on-error: true

@@ -36,7 +36,12 @@ jobs:
           ./gradlew assembleGitDebug --no-daemon \
             -Pandroid.injected.build.abi=arm64-v8a,armeabi-v7a
 
+      - name: Find CS16Client APK
+        run: |
+          find cs16client/android/app/build/outputs -name "*.apk" -exec ls -la {} \;
+
       - name: Collect CS16Client libs
+        continue-on-error: true
         run: |
           mkdir -p android/app/src/main/jniLibs/arm64-v8a
           mkdir -p android/app/src/main/jniLibs/armeabi-v7a

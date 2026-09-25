@@ -52,6 +52,12 @@ jobs:
 
       - name: Merge CS16Client assets into xash-extras
         run: |
+          echo "=== xash-extras icerigi (ilk 60) ==="
+          find 3rdparty/extras/xash-extras -maxdepth 3 | head -60
+          echo "=== cakisan dosyalar ==="
+          comm -12 \
+            <(cd 3rdparty/extras/xash-extras && find . -type f | sort) \
+            <(cd cs16client/android/app/src/main/assets && find . -type f | sort)
           cp -rf cs16client/android/app/src/main/assets/. 3rdparty/extras/xash-extras/
           echo "=== birlesik xash-extras ==="
           find 3rdparty/extras/xash-extras -maxdepth 2 | head -40

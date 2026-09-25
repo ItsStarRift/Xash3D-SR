@@ -50,6 +50,12 @@ jobs:
           echo "=== assets klasoru ==="
           find cs16client/android/app/src/main/assets -maxdepth 2 2>&1 | head -60
 
+      - name: Merge CS16Client assets into xash-extras
+        run: |
+          cp -rf cs16client/android/app/src/main/assets/. 3rdparty/extras/xash-extras/
+          echo "=== birlesik xash-extras ==="
+          find 3rdparty/extras/xash-extras -maxdepth 2 | head -40
+
       - name: Build engine APK
         run: bash scripts/gha/build_android.sh
 

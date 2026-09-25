@@ -52,13 +52,14 @@ jobs:
 
       - name: Merge CS16Client assets into xash-extras
         run: |
-          echo "=== xash-extras icerigi (ilk 60) ==="
-          find 3rdparty/extras/xash-extras -maxdepth 3 | head -60
-          echo "=== cakisan dosyalar ==="
-          comm -12 \
-            <(cd 3rdparty/extras/xash-extras && find . -type f | sort) \
-            <(cd cs16client/android/app/src/main/assets && find . -type f | sort)
+          # CS'e ozel tema/veri klasorlerini xash-extras'tan tamamen kaldir,
+          # sonra CS16Client'in kendi surumunu koy (karisim degil, degisim)
+          for KLASOR in gfx/shell touch touch_presets touch_default maps addons; do
+            rm -rf "3rdparty/extras/xash-extras/$KLASOR"
+          done
           cp -rf cs16client/android/app/src/main/assets/. 3rdparty/extras/xash-extras/
+          echo "=== birlesim sonrasi gfx/shell ==="
+          find 3rdparty/extras/xash-extras/gfx/shell -maxdepth 1 | head -20
           echo "=== birlesik xash-extras ==="
           find 3rdparty/extras/xash-extras -maxdepth 2 | head -40
 

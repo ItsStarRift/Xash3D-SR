@@ -10,7 +10,7 @@ class StarLaunchActivity : Activity() {
 
         val launch = Intent(this, XashActivity::class.java).apply {
             putExtra("gamedir", "cstrike")
-            putExtra("basedir", "/sdcard/xash")
+            putExtra("basedir", "/storage/emulated/0/xash")
             putExtra("gamelibdir", applicationInfo.nativeLibraryDir)
             putExtra("argv", "-log")
         }

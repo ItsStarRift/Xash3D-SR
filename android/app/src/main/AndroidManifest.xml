@@ -65,7 +65,7 @@
 		<activity
             android:name=".StarLaunchActivity"
             android:exported="true"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:theme="@style/Theme.App">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

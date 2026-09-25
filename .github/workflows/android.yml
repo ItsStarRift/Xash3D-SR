@@ -45,6 +45,11 @@ jobs:
             ./gradlew clean --no-daemon
           done
 
+      - name: Check CS16Client assets
+        run: |
+          echo "=== assets klasoru ==="
+          find cs16client/android/app/src/main/assets -maxdepth 2 2>&1 | head -60
+
       - name: Build engine APK
         run: bash scripts/gha/build_android.sh
 

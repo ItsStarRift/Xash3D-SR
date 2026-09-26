@@ -69,7 +69,6 @@ jobs:
           find 3rdparty/extras/xash-extras/gfx/shell -maxdepth 1 | head -20
           echo "=== birlesik xash-extras ==="
           find 3rdparty/extras/xash-extras -maxdepth 2 | head -40
-
 - name: (GEÇİCİ) jniLibs ve xash-extras'ı tek repo geçişi için paketle
         run: |
           mkdir -p /tmp/tek-repo-gecis/jniLibs

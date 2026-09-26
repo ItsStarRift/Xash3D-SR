@@ -16,72 +16,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Checkout CS16Client
-        uses: actions/checkout@v5
-        with:
-          repository: ItsStarRift/CS16Client-SR
-          path: cs16client
-          submodules: recursive
-
       - name: Install dependencies (engine)
         run: bash scripts/gha/deps_android.sh
 
-      - name: Build CS16Client native libs
-        run: |
-          unset ANDROID_SDK_ROOT
-          export JAVA_HOME=$GITHUB_WORKSPACE/java
-          export ANDROID_HOME=$GITHUB_WORKSPACE/sdk
-          export PATH=$PATH:$JAVA_HOME/bin
-          cd cs16client/android
-          for ABI in arm64-v8a armeabi-v7a; do
-            echo "=== $ABI derleniyor ==="
-            ./gradlew assembleGitDebug --no-daemon -Pandroid.injected.build.abi=$ABI
-            SRC=app/build/intermediates/merged_native_libs/gitDebug/mergeGitDebugNativeLibs/out/lib/$ABI
-            DST=$GITHUB_WORKSPACE/android/app/src/main/jniLibs/$ABI
-            mkdir -p $DST
-            echo "=== SRC klasorundeki tum .so dosyalari ==="
-            ls -la $SRC/
-            # Sadece sonekli (library-suffix uygulanmis) dosyalari al, soneksiz/yanlis kopyalari alma
-            for f in $SRC/*_android_*.so; do
-              cp "$f" $DST/
-            done
-            echo "=== DST'ye kopyalanan dosyalar ==="
-            ls -la $DST/
-            echo "=== $ABI kopyalandi ==="
-            ls -la $DST
-            ./gradlew clean --no-daemon
-          done
+      - name: Build engine APK
+        run: bash scripts/gha/build_android.sh
 
-      - name: Check CS16Client assets
-        run: |
-          echo "=== assets klasoru ==="
-          find cs16client/android/app/src/main/assets -maxdepth 2 2>&1 | head -60
-
-      - name: Merge CS16Client assets into xash-extras
-        run: |
-          # CS'e ozel tema/veri klasorlerini xash-extras'tan tamamen kaldir,
-          # sonra CS16Client'in kendi surumunu koy (karisim degil, degisim)
-          for KLASOR in gfx/shell touch touch_presets touch_default maps addons; do
-            rm -rf "3rdparty/extras/xash-extras/$KLASOR"
-          done
-          cp -rf cs16client/android/app/src/main/assets/. 3rdparty/extras/xash-extras/
-          echo "=== birlesim sonrasi gfx/shell ==="
-          find 3rdparty/extras/xash-extras/gfx/shell -maxdepth 1 | head -20
-          echo "=== birlesik xash-extras ==="
-          find 3rdparty/extras/xash-extras -maxdepth 2 | head -40
-      - name: (GEÇİCİ) jniLibs ve xash-extras'ı tek repo geçişi için paketle
-        run: |
-          mkdir -p /tmp/tek-repo-gecis/jniLibs
-          mkdir -p /tmp/tek-repo-gecis/xash-extras
-          cp -r android/app/src/main/jniLibs/* /tmp/tek-repo-gecis/jniLibs/
-          cp -r 3rdparty/extras/xash-extras/* /tmp/tek-repo-gecis/xash-extras/
-          echo "=== jniLibs icerik ==="
-          find /tmp/tek-repo-gecis/jniLibs -type f
-          echo "=== xash-extras boyutu ==="
-          du -sh /tmp/tek-repo-gecis/xash-extras
-
-      - name: (GEÇİCİ) Tek repo geçiş artifact'i yükle
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: tek-repo-gecis
-          path: /tmp/tek-repo-gecis
+          name: android-apk
+          path: artifacts/*.apk

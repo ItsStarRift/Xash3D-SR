@@ -51,7 +51,7 @@ class StarLaunchActivity : Activity() {
             putExtra("gamedir", "cstrike")
             putExtra("basedir", "/storage/emulated/0/xash")
             putExtra("gamelibdir", applicationInfo.nativeLibraryDir)
-            putExtra("argv", "-log")
+            putExtra("argv", "-log -dev 2 -condebug")
             putExtra("package", packageName)
         }
         startActivity(launch)

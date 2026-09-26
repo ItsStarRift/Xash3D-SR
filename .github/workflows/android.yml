@@ -70,11 +70,19 @@ jobs:
           echo "=== birlesik xash-extras ==="
           find 3rdparty/extras/xash-extras -maxdepth 2 | head -40
 
-      - name: Build engine APK
-        run: bash scripts/gha/build_android.sh
+- name: (GEÇİCİ) jniLibs ve xash-extras'ı tek repo geçişi için paketle
+        run: |
+          mkdir -p /tmp/tek-repo-gecis/jniLibs
+          mkdir -p /tmp/tek-repo-gecis/xash-extras
+          cp -r android/app/src/main/jniLibs/* /tmp/tek-repo-gecis/jniLibs/
+          cp -r 3rdparty/extras/xash-extras/* /tmp/tek-repo-gecis/xash-extras/
+          echo "=== jniLibs icerik ==="
+          find /tmp/tek-repo-gecis/jniLibs -type f
+          echo "=== xash-extras boyutu ==="
+          du -sh /tmp/tek-repo-gecis/xash-extras
 
-      - name: Upload APK
+      - name: (GEÇİCİ) Tek repo geçiş artifact'i yükle
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: artifacts/*.apk
+          name: tek-repo-gecis
+          path: /tmp/tek-repo-gecis

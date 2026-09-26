@@ -52,6 +52,7 @@ class StarLaunchActivity : Activity() {
             putExtra("basedir", "/storage/emulated/0/xash")
             putExtra("gamelibdir", applicationInfo.nativeLibraryDir)
             putExtra("argv", "-log")
+            putExtra("package", packageName)
         }
         startActivity(launch)
         finish()

@@ -39,7 +39,14 @@ jobs:
             SRC=app/build/intermediates/merged_native_libs/gitDebug/mergeGitDebugNativeLibs/out/lib/$ABI
             DST=$GITHUB_WORKSPACE/android/app/src/main/jniLibs/$ABI
             mkdir -p $DST
-            cp $SRC/*.so $DST/
+            echo "=== SRC klasorundeki tum .so dosyalari ==="
+            ls -la $SRC/
+            # Sadece sonekli (library-suffix uygulanmis) dosyalari al, soneksiz/yanlis kopyalari alma
+            for f in $SRC/*_android_*.so; do
+              cp "$f" $DST/
+            done
+            echo "=== DST'ye kopyalanan dosyalar ==="
+            ls -la $DST/
             echo "=== $ABI kopyalandi ==="
             ls -la $DST
             ./gradlew clean --no-daemon
